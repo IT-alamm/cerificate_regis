@@ -5,8 +5,7 @@ body { font-family: Inter, system-ui, Arial, sans-serif; }
 /* ===== ROHS Certificate of Registration (matches sample image) ===== */
 .cert-sheet.rohs { position: relative; background: #fff; width: 100%; max-width: 820px; margin: 0 auto; box-shadow: 0 10px 30px #0f204333; overflow: hidden; display: flex; color: #1a1a1a; border: 1px solid #e5e0cf; page-break-inside: avoid; }
 .ribbon { width: 78px; background: linear-gradient(180deg, #1a237e 0%, #283593 70%, #1a237e 100%); color: #e8c85a; display: flex; flex-direction: column; align-items: center; position: relative; flex-shrink: 0; border-right: 5px solid #c9a227; }
-.ribbon-text { width: 100%; flex: 1; display: block; }
-.red-seal { position: absolute; bottom: 70px; left: -22px; width: 110px; height: 110px; background: radial-gradient(circle, #ef4444 55%, #b91c1c 75%); border-radius: 50%; clip-path: polygon(50% 0%, 57% 6%, 65% 2%, 70% 9%, 79% 7%, 82% 15%, 90% 15%, 90% 24%, 98% 27%, 95% 35%, 100% 42%, 95% 49%, 99% 57%, 92% 62%, 93% 71%, 85% 74%, 83% 83%, 74% 83%, 70% 91%, 61% 89%, 56% 97%, 48% 93%, 40% 99%, 35% 91%, 26% 93%, 24% 84%, 15% 83%, 16% 74%, 8% 70%, 11% 61%, 4% 55%, 9% 48%, 4% 41%, 10% 35%, 8% 26%, 16% 23%, 17% 14%, 25% 14%, 29% 6%, 37% 8%, 43% 1%); }
+.ribbon-text { width: 100%; flex: 1; display: block; min-height: 0; object-fit: contain; }
 .cert-body { flex: 1; padding: 20px 34px 14px; position: relative; text-align: center; background: radial-gradient(ellipse at center, #faf8f0 0%, #fff 60%); }
 .cert-script { font-family: "Playfair Display", "Georgia", serif; font-style: italic; color: #b8860b; font-size: 40px; line-height: 1.1; margin-top: 4px; }
 .rohs-logo { margin: 6px auto 2px; display: flex; flex-direction: column; align-items: center; }

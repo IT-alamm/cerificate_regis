@@ -45,6 +45,8 @@ export async function downloadWord(cert, bodyLabel, baseName) {
   const d = (v) => (isDraft ? 'XX/XX/XXXX' : fmt(v))
   const cb = String(bodyLabel || cert.body || 'CCPL').toUpperCase()
   const cbLower = cb.toLowerCase()
+  const certType = String(cert.certificate_type || cert.type || 'QMS').toUpperCase()
+  const systemName = { QMS: 'Quality Management System', FSMS: 'Food Safety Management System', EMS: 'Environmental Management System' }[certType] || 'Quality Management System'
   const no = cert.certificate_no || 'XX-XXXX-XXX'
   const addrLines = String(cert.address || '').split('\n')
   const addrSize = hp(cert.address_size || cert.addrSize, 24)
@@ -64,7 +66,7 @@ export async function downloadWord(cert, bodyLabel, baseName) {
   const content = [
     P(T('Certificate of Registration', { bold: true, size: 56, color: 'B8860B' }), { alignment: AlignmentType.CENTER, spacing: { after: 160 } }),
     P(T(cb, { bold: true, size: 24, color: '1A237E' }), { alignment: AlignmentType.CENTER }),
-    P(T('This is to Certify That The Quality Management System of', { italics: true, size: 24 }), { alignment: AlignmentType.CENTER, spacing: { before: 160, after: 120 } }),
+        P(T(`This is to Certify That The ${systemName} of`, { italics: true, size: 24 }), { alignment: AlignmentType.CENTER, spacing: { before: 160, after: 120 } }),
     P(T(cert.org_display || '—', { bold: true, size: 28 }), { alignment: AlignmentType.CENTER, spacing: { after: 80 } }),
     ...addrLines.map((l) => P(T(l.toUpperCase(), { size: addrSize, bold: addrBold }), { alignment: AlignmentType.CENTER })),
     P(T('has been assessed and found to conform to the requirements of', { italics: true, size: 24 }), { alignment: AlignmentType.CENTER, spacing: { before: 160, after: 80 } }),
@@ -137,7 +139,7 @@ export async function downloadWord(cert, bodyLabel, baseName) {
                 textDirection: TextDirection.BOTTOM_TO_TOP_LEFT_TO_RIGHT,
                 verticalAlign: VerticalAlign.CENTER,
                 borders: NONE,
-                children: [P(T('QUALITY MANAGEMENT SYSTEM', { bold: true, size: 30, color: 'E8C85A' }), { alignment: AlignmentType.CENTER })],
+                children: [P(T(systemName.toUpperCase(), { bold: true, size: 30, color: 'E8C85A' }), { alignment: AlignmentType.CENTER })],
               }),
               new TableCell({
                 width: { size: 110, type: WidthType.DXA },

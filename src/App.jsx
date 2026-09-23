@@ -166,6 +166,7 @@ export default function App() {
 
   const previewCert = {
     org_display: form.orgName, address: form.address, scope: form.scope,
+    certificate_type: form.type,
     standard: form.standard, certificate_no: form.certNo || 'XX-XXXX-XXX',
     initial_date: form.initial, issue_date: form.issue, expiry_date: form.expiry,
     surve1_due: form.surve1, surve2_due: form.surve2,

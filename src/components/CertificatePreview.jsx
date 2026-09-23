@@ -1,5 +1,43 @@
+import { useEffect, useRef } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { fmt, buildQrPayload } from '../lib/store'
+
+/* Ribbon text canvas par khud draw hota hai — na kat sakta hai, na ulta ho sakta hai.
+   Screen, PDF, Word-photo, print — har jagah same. measureText se fit guarantee. */
+const SYSTEM_NAMES = {
+  QMS: 'Quality Management System',
+  FSMS: 'Food Safety Management System',
+  EMS: 'Environmental Management System',
+}
+function RibbonLabel({ text }) {
+  const ref = useRef(null)
+  useEffect(() => {
+    const canvas = ref.current
+    if (!canvas) return
+    const W = 156, H = 2000
+    canvas.width = W
+    canvas.height = H
+    const ctx = canvas.getContext('2d')
+    ctx.clearRect(0, 0, W, H)
+    ctx.fillStyle = '#e8c85a'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    const TEXT = text || 'QUALITY MANAGEMENT SYSTEM'
+    let fs = 84
+    const fits = () => {
+      ctx.font = `800 ${fs}px Inter, Arial, sans-serif`
+      return ctx.measureText(TEXT).width
+    }
+    while (fits() > H - 200 && fs > 16) fs -= 2
+    ctx.font = `800 ${fs}px Inter, Arial, sans-serif`
+    ctx.save()
+    ctx.translate(W / 2, H / 2)
+    ctx.rotate(-Math.PI / 2) // neeche se upar padhne wala text (original jaisa)
+    ctx.fillText(TEXT, 0, 0)
+    ctx.restore()
+  }, [text])
+  return <canvas ref={ref} className="ribbon-text" aria-label={text} />
+}
 
 export default function CertificatePreview({ cert, orgLabel, body }) {
   const isDraft = cert.status === 'draft'
@@ -9,6 +47,10 @@ export default function CertificatePreview({ cert, orgLabel, body }) {
   // Draft: mask all dates. Final: real dates.
   const d = (v) => (isDraft ? 'XX/XX/XXXX' : fmt(v))
 
+  // Certificate type ke hisab se system name (QMS/FSMS/EMS)
+  const certType = (cert.certificate_type || cert.type || 'QMS').toUpperCase()
+  const systemName = SYSTEM_NAMES[certType] || SYSTEM_NAMES.QMS
+  const ribbonText = systemName.toUpperCase()
   // Signature YES/NO option
   const showSig = String(cert.show_signature || 'YES').toUpperCase() === 'YES'
   // Verify line printed above signature
@@ -30,12 +72,9 @@ export default function CertificatePreview({ cert, orgLabel, body }) {
 
   return (
     <div className="cert-sheet rohs">
-      {/* Left ribbon — SVG text (canvas/PDF-safe, writing-mode html2canvas me ulta aata hai) */}
+      {/* Left ribbon — canvas-drawn text (kat/ulta hona impossible), red sticker hataya */}
       <div className="ribbon">
-        <svg className="ribbon-text" viewBox="0 0 78 1000" preserveAspectRatio="xMidYMid meet" aria-label="QUALITY MANAGEMENT SYSTEM">
-          <text transform="translate(39 500) rotate(-90)" textAnchor="middle" fontSize="44" fontWeight="800" fill="#e8c85a" fontFamily="Inter, Arial, sans-serif" textLength="860" lengthAdjust="spacingAndGlyphs">QUALITY MANAGEMENT SYSTEM</text>
-        </svg>
-        <div className="red-seal" />
+        <RibbonLabel text={ribbonText} />
       </div>
 
       <div className="cert-body">
@@ -45,7 +84,7 @@ export default function CertificatePreview({ cert, orgLabel, body }) {
           <div className="rohs-name">{cb}</div>
         </div>
 
-        <p className="cert-line italic">This is to Certify That The Quality Management System of</p>
+        <p className="cert-line italic">This is to Certify That The {systemName} of</p>
         <h2 className="cert-cname">{cert.org_display || orgLabel || '—'}</h2>
         <div className="cert-addr" style={{ textTransform: 'uppercase', fontSize: `${addrSize}px`, fontWeight: addrBold ? '800' : '400' }}>{(cert.address || '').split('\n').map((l, i) => <div key={i}>{l}</div>)}</div>
 
